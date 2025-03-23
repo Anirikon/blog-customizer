@@ -9,6 +9,7 @@ import {
 	fontSizeOptions,
 	backgroundColors,
 	contentWidthArr,
+	defaultArticleState,
 } from 'src/constants/articleProps';
 import type { ArticleStateType } from 'src/constants/articleProps';
 
@@ -45,13 +46,7 @@ export const ArticleParamsForm = ({ onSubmit }: Props) => {
 	}
 
 	function handleFormReset() {
-		onSubmit({
-			fontFamilyOption: fontFamilyOptions[0],
-			fontColor: fontColors[0],
-			backgroundColor: backgroundColors[0],
-			contentWidth: contentWidthArr[0],
-			fontSizeOption: fontSizeOptions[0],
-		});
+		onSubmit(defaultArticleState);
 		setOption(fontFamilyOptions[0]);
 		setFontSizeOption(fontSizeOptions[0]);
 		setfontColorOption(fontColors[0]);
@@ -79,6 +74,7 @@ export const ArticleParamsForm = ({ onSubmit }: Props) => {
 					onSubmit={handleFormSubmit}
 					onReset={handleFormReset}
 					style={{ gap: '50px' }}>
+					<div className={styles.title}>Задайте параметры</div>
 					<Select
 						selected={fontOption}
 						options={fontFamilyOptions}
