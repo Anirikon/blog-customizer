@@ -10,48 +10,40 @@ import {
 	backgroundColors,
 	contentWidthArr,
 	defaultArticleState,
+	OptionType,
 } from 'src/constants/articleProps';
 import type { ArticleStateType } from 'src/constants/articleProps';
 
 import styles from './ArticleParamsForm.module.scss';
 import { useState } from 'react';
+import clsx from 'clsx';
 
 type Props = {
 	onSubmit: (a: ArticleStateType) => void;
 };
 
 export const ArticleParamsForm = ({ onSubmit }: Props) => {
-	const [isOpen, setState] = useState(false);
-	const [fontOption, setOption] = useState(fontFamilyOptions[0]);
-	const [fontSizeOption, setFontSizeOption] = useState(fontSizeOptions[0]);
-	const [fontColorOption, setfontColorOption] = useState(fontColors[0]);
-	const [backgroundColorOption, setBackgroundColorOption] = useState(
-		backgroundColors[0]
-	);
-	const [widthOption, setWidthOption] = useState(contentWidthArr[0]);
+	const [state, setState] = useState(defaultArticleState);
+	const [isOpen, setToggle] = useState(false);
 
 	function toggle() {
-		setState(!isOpen);
+		setToggle(!isOpen);
 	}
+
+	const handleOnChange = (field: keyof ArticleStateType) => {
+		return (value: OptionType) => {
+			setState((prevState) => ({ ...prevState, [field]: value }));
+		};
+	};
 
 	function handleFormSubmit(event: React.SyntheticEvent<EventTarget>) {
 		event.preventDefault();
-		onSubmit({
-			fontFamilyOption: fontOption,
-			fontColor: fontColorOption,
-			backgroundColor: backgroundColorOption,
-			contentWidth: widthOption,
-			fontSizeOption: fontSizeOption,
-		});
+		onSubmit(state);
 	}
 
 	function handleFormReset() {
 		onSubmit(defaultArticleState);
-		setOption(fontFamilyOptions[0]);
-		setFontSizeOption(fontSizeOptions[0]);
-		setfontColorOption(fontColors[0]);
-		setBackgroundColorOption(backgroundColors[0]);
-		setWidthOption(contentWidthArr[0]);
+		setState(defaultArticleState);
 	}
 
 	return (
@@ -63,45 +55,42 @@ export const ArticleParamsForm = ({ onSubmit }: Props) => {
 				}}
 			/>
 			<aside
-				className={styles.container}
-				style={{
-					transform: `${
-						isOpen === false ? 'translate(-616px)' : 'translate(0px)'
-					}`,
-				}}>
+				className={clsx(
+					styles.container,
+					isOpen === true && styles.container_open
+				)}>
 				<form
 					className={styles.form}
 					onSubmit={handleFormSubmit}
-					onReset={handleFormReset}
-					style={{ gap: '50px' }}>
+					onReset={handleFormReset}>
 					<div className={styles.title}>Задайте параметры</div>
 					<Select
-						selected={fontOption}
+						selected={state.fontFamilyOption}
 						options={fontFamilyOptions}
 						title='Шрифт'
-						onChange={setOption}></Select>
+						onChange={handleOnChange('fontFamilyOption')}></Select>
 					<RadioGroup
 						name='Размер шрифта'
+						selected={state.fontSizeOption}
 						options={fontSizeOptions}
-						selected={fontSizeOption}
 						title='Размер шрифта'
-						onChange={setFontSizeOption}></RadioGroup>
+						onChange={handleOnChange('fontSizeOption')}></RadioGroup>
 					<Select
-						selected={fontColorOption}
+						selected={state.fontColor}
 						options={fontColors}
-						title='Размер шрифта'
-						onChange={setfontColorOption}></Select>
+						title='Цвет шрифта'
+						onChange={handleOnChange('fontColor')}></Select>
 					<Separator />
 					<Select
-						selected={backgroundColorOption}
+						selected={state.backgroundColor}
 						options={backgroundColors}
 						title='Цвет фона'
-						onChange={setBackgroundColorOption}></Select>
+						onChange={handleOnChange('backgroundColor')}></Select>
 					<Select
-						selected={widthOption}
+						selected={state.contentWidth}
 						options={contentWidthArr}
 						title='Ширина контента'
-						onChange={setWidthOption}></Select>
+						onChange={handleOnChange('contentWidth')}></Select>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' htmlType='reset' type='clear' />
 						<Button title='Применить' htmlType='submit' type='apply' />
