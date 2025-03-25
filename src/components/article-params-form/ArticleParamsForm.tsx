@@ -15,8 +15,9 @@ import {
 import type { ArticleStateType } from 'src/constants/articleProps';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import clsx from 'clsx';
+import { useDisclosure } from 'src/hooks/useDisclosure';
 
 type Props = {
 	onSubmit: (a: ArticleStateType) => void;
@@ -24,10 +25,12 @@ type Props = {
 
 export const ArticleParamsForm = ({ onSubmit }: Props) => {
 	const [state, setState] = useState(defaultArticleState);
-	const [isOpen, setToggle] = useState(false);
+	const [isOpen, setIsOpen] = useState(false);
+
+	const asideRef = useRef(null);
 
 	function toggle() {
-		setToggle(!isOpen);
+		setIsOpen(!isOpen);
 	}
 
 	const handleOnChange = (field: keyof ArticleStateType) => {
@@ -46,6 +49,8 @@ export const ArticleParamsForm = ({ onSubmit }: Props) => {
 		setState(defaultArticleState);
 	}
 
+	useDisclosure(asideRef, setIsOpen);
+
 	return (
 		<>
 			<ArrowButton
@@ -55,6 +60,7 @@ export const ArticleParamsForm = ({ onSubmit }: Props) => {
 				}}
 			/>
 			<aside
+				ref={asideRef}
 				className={clsx(
 					styles.container,
 					isOpen === true && styles.container_open
